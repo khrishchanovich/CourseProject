@@ -1,0 +1,17 @@
+{
+    "nastya": {
+        "password": "lol",
+        "pet": {
+            "name": "cotik",
+            "type": "CAT",
+            "happiness": 100,
+            "date": "2023-05-03"
+        },
+        "coins": 0,
+        "items": {
+            "FISH": 1,
+            "BONE": 0
+        },
+        "todo_task": []
+    }
+}
