@@ -1,6 +1,6 @@
 """Class ToDoList"""
 
-from task import Task, Status, Category
+from entities.task import Task, Status, Category
 
 
 class ToDoList:

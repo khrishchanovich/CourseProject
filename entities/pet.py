@@ -1,8 +1,7 @@
 import datetime
-import json
 
-from animal import Animal
-from storage import Storage
+from entities.animal import Animal
+from entities.storage import Storage
 
 
 class Pet(Animal):

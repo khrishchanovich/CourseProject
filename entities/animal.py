@@ -1,8 +1,6 @@
 from datetime import datetime
 
-
 """Class Animal"""
-
 
 class Type:
     type_pet = ['NONE', 'CAT', 'DOG']
@@ -30,3 +28,5 @@ class Animal:
 
     def get_age(self):
         return self.created_date
+
+

@@ -20,9 +20,9 @@ class Ui_MainWindow(object):
         self.listView = QtWidgets.QListView(self.centralwidget)
         self.listView.setGeometry(QtCore.QRect(10, 20, 256, 511))
         self.listView.setObjectName("listView")
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(290, 20, 93, 28))
-        self.pushButton.setObjectName("pushButton")
+        self.AddTask = QtWidgets.QPushButton(self.centralwidget)
+        self.AddTask.setGeometry(QtCore.QRect(290, 20, 93, 28))
+        self.AddTask.setObjectName("AddTask")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
@@ -38,4 +38,4 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton.setText(_translate("MainWindow", "Add task"))
+        self.AddTask.setText(_translate("MainWindow", "Add task"))

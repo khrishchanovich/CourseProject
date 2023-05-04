@@ -1,4 +1,4 @@
-from todolist import ToDoList
+from entities.todolist import ToDoList
 
 
 """Class User"""

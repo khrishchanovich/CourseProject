@@ -1,9 +1,9 @@
 """Class Storage"""
 
 
-class EItem:
-    type_item = ['FISH', 'BONE']
-
+# class EItem:
+#     type_item = ['FISH', 'BONE']
+#
 
 class Storage:
 

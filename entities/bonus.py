@@ -1,5 +1,4 @@
-import json
-from filehandler import JSON
+from lib.filehandler import JSON
 
 class Bonus:
     @staticmethod
