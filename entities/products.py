@@ -2,56 +2,35 @@ from lib.filehandler import JSON, BIN
 from utils.constants import OPTIONS_TODO
 
 class Products:
-
     @staticmethod
-    def buy_json(user):
-        users = JSON.load_from_json()
+    def buy_json(user, choice):
+        users = JSON.load_from_json(user.name)
 
-        user.coins = users[user.name]['coins']
+        user.coins = users['coins']
 
-        print(user.coins)
+        if choice == 'FISH':
+            if user.coins >= 15:
+                user.items['FISH'] += 1
+                user.coins -= 15
 
-        while True:
-            print('1. Рыбка - 15 монет'
-                  '\n2. Косточка - 15 монеток'
-                  '\n3. Выход')
+                users = JSON.load_from_json(user.name)
 
-            choice = input('Номер выбора: ')
-            if choice == '1':
-                if user.coins < 15:
-                    print('У Вас недостаточно монеток!')
+                users['items'] = user.items
+                users['coins'] -= 15
 
-                else:
-                    user.items['FISH'] += 1
-                    user.coins -= 15
+                JSON.dump_to_json(users, user.name)
 
-                    users = JSON.load_from_json()
+        elif choice == 'BONE':
+            if user.coins >= 15:
+                user.items['BONE'] += 1
+                user.coins -= 15
 
-                    users[user.name]['items'] = user.items
-                    users[user.name]['coins'] -= 15
+                users = JSON.load_from_json(user.name)
 
-                    JSON.dump_to_json(users)
+                users['items'] = user.items
+                users['coins'] -= 15
 
-            elif choice == '2':
-                if user.coins < 15:
-                    print('У Вас недостаточно монеток!')
-
-                else:
-                    user.items['BONE'] += 1
-                    user.coins -= 15
-
-                    users = JSON.load_from_json()
-
-                    users[user.name]['items'] = user.items
-                    users[user.name]['coins'] -= 15
-
-                    JSON.dump_to_json(users)
-
-            elif choice == '3':
-                print(OPTIONS_TODO)
-                break
-            else:
-                print('Неправильный выбор, попробуйте еще раз!')
+                JSON.dump_to_json(users, user.name)
 
     @staticmethod
     def buy_bin(user):
@@ -65,6 +44,7 @@ class Products:
             print('1. Рыбка - 15 монет'
                   '\n2. Косточка - 15 монеток'
                   '\n3. Выход')
+            print(user.items)
 
             choice = input('Номер выбора: ')
             if choice == '1':
@@ -72,6 +52,7 @@ class Products:
                     print('У Вас недостаточно монеток!')
 
                 else:
+                    print(user.items)
                     user.items['FISH'] += 1
                     user.coins -= 15
 

@@ -11,6 +11,7 @@ from entities.animal import Type
 from entities.pet import Pet
 from entities.storage import Storage
 from entities.products import Products
+from entities.registationpolicy import RegistrationPolicy
 
 from lib.filehandler import JSON, BIN
 
@@ -94,12 +95,12 @@ class ApplicationJSON:
     def register(self):
         name = input('Введите имя: ')
 
-        users = JSON.load_from_json()
-
-        if name in users:
-            print('Такое имя пользователя уже существует :(\n'
-                  'Попробуйте ввести другое имя для регистрации')
-            self.register()
+        # users = JSON.load_from_json()
+        #
+        # if name in users:
+        #     print('Такое имя пользователя уже существует :(\n'
+        #           'Попробуйте ввести другое имя для регистрации')
+        #     self.register()
 
         password = input('Введите пароль: ')
         pet_name = input('Введите имя вашего будущего питомца\nДалее у вас будет возможность выбрать его!'
@@ -126,6 +127,9 @@ class ApplicationJSON:
               f'\nЗаботьтесь о {pet.name} как о настоящем любимце.')
 
         coins = 15
+        reg = RegistrationPolicy()
+        reg.registration(name, password)
+
         self.user = User(name, password, pet, coins, {})
         JSON.register_json(self.user.name, password, pet.to_dict(), coins)
 
@@ -149,18 +153,23 @@ class ApplicationJSON:
             if user_input == '2':
                 self.add_task()
             if user_input == '3':
-                self.edit_task()
+                self.user.todo.print_only_index_and_name()
+                self.response()
             if user_input == '4':
-                self.user.todo.sort_by_status()
+                self.edit_task()
             if user_input == '5':
-                self.user.todo.sort_by_category()
+                self.user.todo.sort_by_status()
+                print(OPTIONS_TODO)
             if user_input == '6':
-                self.info_pet()
+                self.user.todo.sort_by_category()
+                print(OPTIONS_TODO)
             if user_input == '7':
-                self.buy_item()
+                self.info_pet()
             if user_input == '8':
-                self.feed_pet()
+                self.buy_item()
             if user_input == '9':
+                self.feed_pet()
+            if user_input == '0':
                 sys.exit(1)
 
     def add_task(self):
@@ -222,13 +231,13 @@ class ApplicationJSON:
 
                     JSON.dump_to_json(users)
 
+                    print(OPTIONS_TODO)
                     break
                 else:
                     print(OPTIONS_TODO)
                     self.response()
         else:
             print('Ваш список пуст! Удалять нечего.')
-            print(OPTIONS_TODO)
             self.response()
 
     def edit_status(self):
@@ -257,6 +266,7 @@ class ApplicationJSON:
 
                         users[self.user.name]['coins'] += 15
 
+                        print(OPTIONS_TODO)
                         JSON.dump_to_json(users)
 
                         break
@@ -272,7 +282,6 @@ class ApplicationJSON:
                 print('Задание готово! Вы молодец.')
         else:
             print('Нет задач в списке!')
-            print(OPTIONS_TODO)
             self.response()
 
     def update(self):
@@ -299,7 +308,7 @@ class ApplicationJSON:
 
         if len(self.user.todo.get_to_do_list()) != 0:
             while True:
-                user_input = input()
+                user_input = input('Введите номер задачи: ')
 
                 get_title_by_number = int(user_input)
                 if get_title_by_number != 0:
@@ -309,7 +318,7 @@ class ApplicationJSON:
                     print(OPTIONS_TODO)
                     self.response()
 
-            new_name = input('Выберите номер задачи: ')
+            new_name = input('Введите новое имя задачи: ')
 
             users = JSON.load_from_json()
 
@@ -323,6 +332,7 @@ class ApplicationJSON:
 
             searched.set_title(new_name)
             print('Новое имя задачи: ', searched.get_title())
+            print(OPTIONS_TODO)
         else:
             print('Ваш список задач пуст!')
             print(OPTIONS_TODO)
@@ -422,6 +432,7 @@ class ApplicationJSON:
                 JSON.dump_to_json(users)
 
             print('Категория была изменена.')
+            print(OPTIONS_TODO)
         else:
             print('Ваш список задач пуст!')
             print(OPTIONS_TODO)
@@ -488,6 +499,7 @@ class ApplicationJSON:
         JSON.dump_to_json(users)
 
     def feed_pet(self):
+        self.check()
         pet_ = self.info_about_pet()
 
         print(QUESTION_FOOD)
@@ -538,17 +550,16 @@ class ApplicationJSON:
         if choice == '2':
             self.response()
 
+
 class ApplicationBIN:
 
     def run(self):
         users = BIN.load_from_bin()
 
         for name in users:
-            print(f'User: {name}')
+            print(f'Пользователь: {name}')
 
-        print('What are you want to do?'
-              '\n1 - logging'
-              '\n2 - registration')
+        print(QUESTION)
 
         while True:
             choice = input()
@@ -560,16 +571,16 @@ class ApplicationBIN:
                 self.register()
                 break
             else:
-                print('Invalid choice, try again')
+                print('Неправильный выбор, попробуйте еще раз!')
 
     def login(self):
-        name = input('Enter your name: ')
-        password = input('Enter your password: ')
+        name = input('Введите имя: ')
+        password = input('Введите пароль: ')
 
         users = BIN.load_from_bin()
 
         if name not in users:
-            print('You are not user! Try register!')
+            print(PROBLEM)
             self.run()
 
         if name in users and users[name]['password'] == password:
@@ -609,67 +620,91 @@ class ApplicationBIN:
                 self.user.todo.add_to_do(task)
 
         elif name in users and users[name]['password'] != password:
-            print('Password is wrong! Try again!')
+            print('Вы ввели неправильный пароль :(\nПопробуйте еще раз!')
             self.login()
 
         self.response()
 
     def register(self):
-        name = input('Enter your name: ')
+        name = input('Введите имя: ')
 
         users = BIN.load_from_bin()
 
         if name in users:
-            print('This name is not available! Please, choose other name')
+            print('Такое имя пользователя уже существует :(\n'
+                  'Попробуйте ввести другое имя для регистрации')
             self.register()
 
-        password = input('Enter your password: ')
-        pet_name = input('Enter name of your pet: ')
+        password = input('Введите пароль: ')
+        pet_name = input('Введите имя вашего будущего питомца\nДалее у вас будет возможность выбрать его!'
+                         '\nИмя питомца: ')
+
         pet = Pet(pet_name)
 
-        print('Choose a type of your pet!'
-              '\n1 - Cat'
-              '\n2 - Dog')
+        print(Animal.TYPE_OF_PET)
 
         while True:
             a = input()
             if a == '1':
                 pet.set_type(Type.type_pet[1])
+                print(Animal.CAT)
                 break
             elif a == '2':
                 pet.set_type(Type.type_pet[2])
+                print(Animal.DOG)
                 break
             else:
-                print('Invalid choice, try again')
+                print('Неправильный выбор, попробуйте еще раз!')
+
+        print(f'Теперь это Ваш питомец!'
+              f'\nЗаботьтесь о {pet.name} как о настоящем любимце.')
 
         coins = 15
         self.user = User(name, password, pet, coins, {})
         BIN.register_bin(self.user.name, password, pet.to_dict(), coins)
-        self.response()
+
+        print(RULES)
+
+        print(CONTINEU_QUESTION)
+        question = input('Ввод: ')
+        if question == '1':
+            self.response()
+        else:
+            sys.exit(1)
 
     def response(self):
         print(OPTIONS_TODO)
 
         while True:
-            user_input = input('Choose command: ')
+            user_input = input('Выберите команду: ')
             if user_input == '1':
-                self.add_task()
+                print(RULES)
+                print(OPTIONS_TODO)
             if user_input == '2':
-                self.edit_task()
+                self.add_task()
             if user_input == '3':
-                self.user.todo.sort_by_status()
+                self.user.todo.print_only_index_and_name()
+                self.response()
             if user_input == '4':
-                self.user.todo.sort_by_category()
+                self.edit_task()
             if user_input == '5':
-                self.buy_item()
+                self.user.todo.sort_by_status()
+                print(OPTIONS_TODO)
             if user_input == '6':
-                self.info_pet()
+                self.user.todo.sort_by_category()
+                print(OPTIONS_TODO)
             if user_input == '7':
+                self.info_pet()
+            if user_input == '8':
+                self.buy_item()
+            if user_input == '9':
                 self.feed_pet()
+            if user_input == '0':
+                sys.exit(1)
 
     def add_task(self):
-        print('ADD NEW TASK!')
-        user_input = input('Name of task: ')
+        print('Давайте добавим новую задачу.')
+        user_input = input('Задача: ')
 
         new_task = Task()
         new_task.set_title(user_input)
@@ -678,7 +713,7 @@ class ApplicationBIN:
         new_task.set_date_of_created(new_date)
 
         self.user.todo.add_to_do(new_task)
-        print('New task "', new_task.name, '" was added!')
+        print('Новая задача "', new_task.name, '" была добавлена!')
 
         users = BIN.load_from_bin()
 
@@ -687,8 +722,11 @@ class ApplicationBIN:
 
         BIN.dump_to_bin(users)
 
+        print(OPTIONS_TODO)
+
     def edit_task(self):
         print(OPTIONS_EDIT_TASK)
+
         user_input = input()
 
         if user_input == '0':
@@ -699,17 +737,18 @@ class ApplicationBIN:
             self.edit_status()
         elif user_input == '3':
             self.update()
-        elif user_input == '4':
-            self.user.todo.sort_by_status()
+        else:
+            print('Неправильный выбор, попробуйте еще раз!')
+            print(OPTIONS_TODO)
 
     def remove_task(self):
         self.user.todo.print_only_index_and_name()
 
         if len(self.user.todo.get_to_do_list()) != 0:
-            print('Do you want delete something?')
+            print('Хотите удалить что-то из списка задач?')
 
             while True:
-                user_input = input('Enter the number of the task!')
+                user_input = input('Введите номер задачи: ')
 
                 remove_by_number = int(user_input)
                 if remove_by_number != 0:
@@ -721,22 +760,26 @@ class ApplicationBIN:
                     users[self.user.name]['todo_task'] = list_
 
                     BIN.dump_to_bin(users)
+
+                    print(OPTIONS_TODO)
                     break
                 else:
+                    print(OPTIONS_TODO)
                     self.response()
         else:
-            print('No task for remove!')
+            print('Ваш список пуст! Удалять нечего.')
+            print(OPTIONS_TODO)
             self.response()
 
     def edit_status(self):
-        print('Done something? Mark it!')
+        print('Успели что-то сделать? Давайте отметим это.')
         self.user.todo.print_only_index_and_name()
 
         searched = Task()
 
         if len(self.user.todo.get_to_do_list()) != 0:
             while True:
-                user_input = input('Enter the number of the task!')
+                user_input = input('Введите номер задачи: ')
 
                 get_task_by_name = int(user_input)
                 if get_task_by_name != 0:
@@ -755,18 +798,22 @@ class ApplicationBIN:
                         users[self.user.name]['coins'] += 15
 
                         BIN.dump_to_bin(users)
+
+                        print(OPTIONS_TODO)
                         break
                     else:
-                        print('This task is already done!')
+                        print('Эта задачу уже сделана.')
                         break
                 else:
+                    print(OPTIONS_TODO)
                     self.response()
 
             if searched.status != Status.DONE:
                 searched.set_status(Status.DONE)
-                print('TASK DONE! GRATEFUL!')
+                print('Задание готово! Вы молодец.')
         else:
-            print('No task in todo!')
+            print('Нет задач в списке!')
+            print(OPTIONS_TODO)
             self.response()
 
     def update(self):
@@ -775,30 +822,35 @@ class ApplicationBIN:
         user_input = input()
 
         if user_input == '0':
+            print(OPTIONS_TODO)
             self.response()
         elif user_input == '1':
             self.edit_name()
         elif user_input == '2':
             self.edit_category()
+        else:
+            print('Неправильный выбор, попробуйте еще раз!')
+            print(OPTIONS_TODO)
 
     def edit_name(self):
-        print('You can edit name of task now!')
+        print('Вы можете изменить имя задачи.')
         self.user.todo.print_only_index_and_name()
 
         searched = Task()
 
         if len(self.user.todo.get_to_do_list()) != 0:
             while True:
-                user_input = input()
+                user_input = input('Выберите номер задачи: ')
 
                 get_title_by_number = int(user_input)
                 if get_title_by_number != 0:
                     searched = self.user.todo.task_in_to_do(get_title_by_number - 1)
                     break
                 else:
+                    print(OPTIONS_TODO)
                     self.response()
 
-            new_name = input('Enter new name of the task: ')
+            new_name = input('Выберите новое имя задачи: ')
 
             users = BIN.load_from_bin()
 
@@ -811,30 +863,32 @@ class ApplicationBIN:
             BIN.dump_to_bin(users)
 
             searched.set_title(new_name)
-            print('New name of the task: ', searched.get_title())
+            print('Новое имя задачи: ', searched.get_title())
         else:
-            print('No task in todo!')
+            print('Ваш список задач пуст!')
+            print(OPTIONS_TODO)
             self.response()
 
     def edit_category(self):
-        print('Need some category? Do it!')
+        print('Желаете изменить категорию задачи?')
         self.user.todo.print_only_index_and_name()
 
         searched = Task()
 
         if len(self.user.todo.get_to_do_list()) != 0:
             while True:
-                user_input = input('Enter the number of the task!')
+                user_input = input('Введите номер задачи: ')
 
                 get_task_by_name = int(user_input)
                 if get_task_by_name != 0:
                     searched = self.user.todo.task_in_to_do(get_task_by_name - 1)
                     break
                 else:
+                    print(OPTIONS_TODO)
                     self.response()
 
             print(CATEGORY)
-            category = input('Enter the numer of category: ')
+            category = input('Введите номер категории: ')
 
             if category == '1':
                 searched.set_category(Category.NONE)
@@ -908,15 +962,17 @@ class ApplicationBIN:
 
                 BIN.dump_to_bin(users)
 
-            print('Category was changed!')
+            print('Категория была изменена.')
         else:
-            print('No task in todo!')
+            print('Ваш список задач пуст!')
+            print(OPTIONS_TODO)
             self.response()
 
     def buy_item(self):
         store = Storage()
 
-        print('Welcome to store! Buy some items if you need!')
+        print('Добро пожаловать в магазин!'
+              '\nЗдесь Вы можете купить продукты для своего питомца.')
         print(store.get_items())
 
         Products.buy_bin(self.user)
@@ -927,21 +983,39 @@ class ApplicationBIN:
 
         pet_ = users[self.user.name]['pet']
 
-        print(f'NAME: {pet_["name"]}'
-              f'\nTYPE: {pet_["type"]}'
-              f'\nHAPPINESS: {pet_["happiness"]}')
+        if pet_['type'] == Type.type_pet[1]:
+            print(f'Имя: {pet_["name"]}'
+                  f'\nТип: {pet_["type"]}'
+                  f'\n{Animal.CAT}'
+                  f'\nНастроение: {pet_["happiness"]}')
+        if pet_['type'] == Type.type_pet[2]:
+            print(f'Имя: {pet_["name"]}'
+                  f'\nТип: {pet_["type"]}'
+                  f'\n{Animal.DOG}'
+                  f'\nНастроение: {pet_["happiness"]}')
 
-    def check(self):
-        name = self.user.pet['name']
-        type = self.user.pet['type']
-        mood = self.user.pet['happiness']
-        date = self.user.pet['date']
+        self.response()
+
+    def info_about_pet(self):
+        users = BIN.load_from_bin()
+
+        pet_file = users[self.user.name]['pet']
+
+        name = pet_file['name']
+        type = pet_file['type']
+        mood = pet_file['happiness']
+        date = pet_file['date']
 
         pet_ = Pet(name)
 
         pet_.set_type(type)
         pet_.set_mood(mood)
         pet_.set_age(datetime.datetime.strptime(date, '%Y-%m-%d').date())
+
+        return pet_
+
+    def check(self):
+        pet_ = self.info_about_pet()
 
         mood = pet_.check_mood()
 
@@ -955,20 +1029,10 @@ class ApplicationBIN:
         BIN.dump_to_bin(users)
 
     def feed_pet(self):
-        name = self.user.pet['name']
-        type = self.user.pet['type']
-        mood = self.user.pet['happiness']
-        date = self.user.pet['date']
+        self.check()
+        pet_ = self.info_about_pet()
 
-        pet_ = Pet(name)
-
-        pet_.set_type(type)
-        pet_.set_mood(mood)
-        pet_.set_age(datetime.datetime.strptime(date, '%Y-%m-%d').date())
-
-        print('Do you want to feed your pet?'
-              '\n1. Yes!'
-              '\n2. No...')
+        print(QUESTION_FOOD)
 
         choice = input()
         if choice == '1':
@@ -977,41 +1041,45 @@ class ApplicationBIN:
             dict_ = users[self.user.name]['items']
             pet_file = users[self.user.name]['pet']
 
-            print(f'Your inventory: {dict_}')
+            print(f'Ваш инвентарь: {dict_}')
 
-            print('1. Fish,'
-                  '\n2. Bone,'
-                  '\n3. Exit')
+            if dict_['FISH'] == 0 and dict_['BONE'] == 0:
+                print('К сожалению, в Вашем инвентаре ничего нет!')
+                self.response()
+
+            print('1. Рыбка (FISH),'
+                  '\n2. Косточка (BONE),'
+                  '\n3. Выход')
 
             while True:
                 food = input()
                 if food == '1':
-                    food = 'FISH'
+                    food = TYPE_ITEM[0]
 
                     mood_ = pet_.feed(food)
                     self.user.pet['happiness'] = mood_
                     pet_file['happiness'] = mood_
                     dict_['FISH'] -= 1
 
-                    print(f'Your pay: {food} - 15c')
-
                 elif food == '2':
-                    food = 'BONE'
+                    food = TYPE_ITEM[1]
 
                     mood_ = pet_.feed(food)
                     self.user.pet['happiness'] = mood_
                     pet_file['happiness'] = mood_
                     dict_['BONE'] -= 1
 
-                    print(f'Your pay: {food} - 15c')
-
                 elif food == '3':
                     break
                 else:
-                    print('Invalid choice, try again!')
+                    print('Неправильный выбор, попробуйте еще раз!')
 
             BIN.dump_to_bin(users)
+            self.response()
 
+        if choice == '2':
+            self.response()
 
-app = ApplicationJSON()
-app.run()
+if __name__ == "__main__":
+    app = ApplicationJSON()
+    app.run()

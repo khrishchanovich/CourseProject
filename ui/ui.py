@@ -1,16 +1,20 @@
-import json
-from tkinter import *
 import tkinter
 import datetime
 import customtkinter
+import sqlite3
+
 from CTkMessagebox import CTkMessagebox
+
 from entities.pet import Pet
 from entities.animal import Type
-from utils.constants import Animal
 from entities.user import User
 from entities.task import Task, Category, Status
+from entities.products import Products
+from entities.storage import Storage
+
+from utils.constants import Animal
+
 from lib.filehandler import JSON
-import sqlite3
 
 
 class AppUI:
@@ -19,6 +23,9 @@ class AppUI:
         self.master = master
         self.var_pet = customtkinter.StringVar(value='CAT')
         self.var_cat = customtkinter.StringVar(value='NONE')
+        self.var_items = customtkinter.StringVar(value='FISH')
+        self.string = str()
+
         self.login()
 
     def view_start(self):
@@ -50,15 +57,6 @@ class AppUI:
         )
 
         lst_box = self.lb_ctk(self.master)
-
-        scrl = self.scroll_ctk(lst_box, lst_box.yview)
-
-        lst_box.configure(yscrollcommand=scrl.set)
-
-        scrl.place(
-            x=185,
-            y=10
-        )
 
         lst_box.place(
             x=10,
@@ -94,6 +92,8 @@ class AppUI:
 
     def login(self):
         self.view_start()
+
+        self.master.geometry('800x250')
 
         lb_txt = self.label_ctk(self.master, 'Желаете войти?')
         lb_txt.place(
@@ -185,22 +185,14 @@ class AppUI:
 
         for i in self.user.todo.list_of_task:
             string += f'{self.user.todo.list_of_task.index(i) + 1}. ' \
-                 f'{i.get_title()}: ' \
-                 f'\n{i.get_status().name}' \
-                 f'\n{i.get_category().name}\n'
+                      f'{i.get_title()}: ' \
+                      f'\n{i.get_status().name}' \
+                      f'\n{i.get_category().name}\n'
 
         self.list_box.destroy()
         self.scroll.destroy()
 
         self.list_box = self.lb_ctk(self.frame_list, 540)
-        self.scroll = self.scroll_ctk(self.list_box, self.list_box.yview)
-
-        self.list_box.configure(yscrollcommand=self.scroll.set)
-
-        self.scroll.place(
-            x=525,
-            y=5
-        )
 
         self.list_box.place(
             x=0,
@@ -213,8 +205,8 @@ class AppUI:
     def frame_ctk(self, window, width=200, height=200):
         frame = customtkinter.CTkFrame(
             window,
-            bg_color='LightPink',
-            fg_color='LightPink',
+            bg_color='LightCyan',
+            fg_color='SteelBlue',
             width=width,
             height=height
         )
@@ -226,7 +218,7 @@ class AppUI:
             window,
             orientation='vertical',
             command=command,
-            button_color='MediumVioletRed'
+            button_color='SteelBlue'
         )
 
         return scroll
@@ -234,23 +226,24 @@ class AppUI:
     def lb_ctk(self, window, width=200):
         list_box = customtkinter.CTkTextbox(
             window,
-            bg_color='LightPink',
-            fg_color='LightPink',
-            font=('Segoe UI Semibold', 15),
+            bg_color='LightCyan',
+            fg_color='PaleTurquoise',
+            font=('Helvetica', 15),
             activate_scrollbars=True,
-            scrollbar_button_color='Violet',
+            scrollbar_button_color='SteelBlue',
             width=width
         )
 
         return list_box
 
-    def label_ctk(self, window, text, font=('Segoe UI Semibold', 15), bc='Pink', fc='Pink'):
+    def label_ctk(self, window, text, font=('Helvetica', 15), bc='LightCyan', fc='LightCyan', color='Black'):
         lb = customtkinter.CTkLabel(
             window,
             text=text,
             bg_color=bc,
             fg_color=fc,
-            font=font
+            font=font,
+            text_color=color
         )
 
         return lb
@@ -263,8 +256,8 @@ class AppUI:
     def entry_ctk(self, window, width=140):
         task_name = customtkinter.CTkEntry(
             window,
-            bg_color='Pink',
-            font=('Segoe UI Semibold', 15),
+            bg_color='LightCyan',
+            font=('Helvetica', 15),
             width=width
         )
 
@@ -274,9 +267,11 @@ class AppUI:
         button = customtkinter.CTkButton(
             window,
             text=text,
-            bg_color='Pink',
-            fg_color='MediumVioletRed',
-            font=('Segoe UI Semibold', 15),
+            bg_color='LightCyan',
+            fg_color='SteelBlue',
+            hover_color='RoyalBlue',
+            font=('Helvetica', 15),
+            text_color='Black',
             command=command
         )
 
@@ -287,9 +282,10 @@ class AppUI:
             window,
             text=text,
             value=value,
-            bg_color='Pink',
-            hover_color='Indigo',
-            font=('Segoe UI Semibold', 15),
+            bg_color='LightCyan',
+            fg_color='SteelBlue',
+            hover_color='RoyalBlue',
+            font=('Helvetica', 15),
             variable=variable,
             command=command
         )
@@ -300,8 +296,11 @@ class AppUI:
         window = tkinter.Tk()
 
         window.title('Добавление задачи')
-        window.config(bg='Pink')
+        window.config(bg='LightCyan')
         window.geometry('500x200')
+
+        lb = self.label_ctk(window, 'Введите имя задачи')
+        lb.pack()
 
         self.entr_name_task = self.entry_ctk(window, 380)
         self.entr_name_task.pack()
@@ -336,8 +335,11 @@ class AppUI:
         window = tkinter.Tk()
 
         window.title('Удаление задачи')
-        window.config(bg='Pink')
+        window.config(bg='LightCyan')
         window.geometry('500x200')
+
+        lb = self.label_ctk(window, 'Введите номер задачи')
+        lb.pack()
 
         self.entr = self.entry_ctk(window)
         self.entr.pack()
@@ -376,8 +378,11 @@ class AppUI:
         window = tkinter.Tk()
 
         window.title('Изменить статус')
-        window.config(bg='Pink')
+        window.config(bg='LightCyan')
         window.geometry('500x200')
+
+        lb = self.label_ctk(window, 'Введите номер задачи')
+        lb.pack()
 
         self.entr = self.entry_ctk(window)
         self.entr.pack()
@@ -425,15 +430,15 @@ class AppUI:
         if self.var_cat.get() == 'NONE':
             self.user.todo.list_of_task[int(number) - 1].set_category(Category.NONE)
         elif self.var_cat.get() == 'LEARNING':
-            self.user.todo.list_of_task[int(number)-1].set_category(Category.LEARNING)
+            self.user.todo.list_of_task[int(number) - 1].set_category(Category.LEARNING)
         elif self.var_cat.get() == 'WORKING':
-            self.user.todo.list_of_task[int(number)-1].set_category(Category.WORKING)
+            self.user.todo.list_of_task[int(number) - 1].set_category(Category.WORKING)
         elif self.var_cat.get() == 'PERSONAL':
-            self.user.todo.list_of_task[int(number)-1].set_category(Category.PERSONAL)
+            self.user.todo.list_of_task[int(number) - 1].set_category(Category.PERSONAL)
         elif self.var_cat.get() == 'TRAVELING':
-            self.user.todo.list_of_task[int(number)-1].set_category(Category.TRAVELING)
+            self.user.todo.list_of_task[int(number) - 1].set_category(Category.TRAVELING)
         elif self.var_cat.get() == 'DAILY':
-            self.user.todo.list_of_task[int(number)-1].set_category(Category.DAILY)
+            self.user.todo.list_of_task[int(number) - 1].set_category(Category.DAILY)
 
     def category_window(self):
         window = tkinter.Tk()
@@ -444,7 +449,7 @@ class AppUI:
             window.destroy()
 
         window.title('Изменить категорию')
-        window.config(bg='Pink')
+        window.config(bg='LightCyan')
         window.geometry('500x500')
 
         rd_none = self.radio_ctk(
@@ -623,11 +628,17 @@ class AppUI:
         window = tkinter.Tk()
 
         window.title('Изменение имени')
-        window.config(bg='Pink')
+        window.config(bg='LightCyan')
         window.geometry('500x200')
+
+        lb_number = self.label_ctk(window, 'Введите номер задачи')
+        lb_number.pack()
 
         self.entr = self.entry_ctk(window)
         self.entr.pack()
+
+        lb_name = self.label_ctk(window, 'Введите новое имя')
+        lb_name.pack()
 
         self.entr_name = self.entry_ctk(window, 380)
         self.entr_name.pack()
@@ -664,6 +675,220 @@ class AppUI:
         else:
             self.mb_ctk(self.title[0], 'Список задач пуст.')
 
+    def set_type_of_item(self):
+        if self.var_items.get() == 'FISH':
+            self.user.items['FISH'] += 1
+        elif self.var_items.get() == 'BONE':
+            self.user.items['BONE'] += 1
+
+    def buy_window(self):
+        self.window = tkinter.Tk()
+
+        self.window.title('Магазин')
+        self.window.config(bg='LightCyan')
+        self.window.geometry('500x300')
+
+        store = Storage()
+
+        lb_inv = self.label_ctk(self.window, 'Ваш инвентарь')
+        lb_inv.pack()
+
+        self.lb_fish = self.label_ctk(self.window, 'Количество рыбки: ' + str(self.user.items['FISH']))
+        self.lb_fish.pack()
+
+        self.lb_bone = self.label_ctk(self.window, 'Количество косточек: ' + str(self.user.items['BONE']))
+        self.lb_bone.pack()
+
+        lb = self.label_ctk(self.window, 'Магазин')
+        lb.pack()
+
+        rd_fish = self.radio_ctk(
+            self.window,
+            'Рыбка',
+            store.get_items()[0],
+            self.var_items,
+            self.var_items.get
+        )
+        rd_fish.pack()
+
+        rd_bone = self.radio_ctk(
+            self.window,
+            'Косточка',
+            store.get_items()[1],
+            self.var_items,
+            self.var_items.get
+        )
+        rd_bone.pack()
+
+        btn = self.button_ctk(self.window, 'Купить', self.buy_item)
+        btn.pack()
+
+        btn_close = self.button_ctk(self.window, 'Закрыть окно', lambda: self.window.destroy())
+        btn_close.pack()
+
+    def buy_item(self):
+        Products.buy_json(self.user, self.var_items.get())
+
+        self.lb_fish.configure(text='Количество рыбки: ' + str(self.user.items['FISH']))
+        self.lb_bone.configure(text='Количество косточек: ' + str(self.user.items['BONE']))
+        self.lb_coins.configure(text='Монеты: ' + str(self.user.coins))
+
+    def info_pet(self, name):
+        self.check()
+        users = JSON.load_from_json(name)
+
+        pet_ = users['pet']
+
+        lb_petname = self.label_ctk(self.master, pet_['name'], ('Helvetica', 30))
+        lb_petname.place(
+            x=5,
+            y=295
+        )
+
+        life = str()
+
+        if 75 < pet_['happiness'] <= 100:
+            life = '\u2665\u2665\u2665\u2665'
+        elif 50 < pet_['happiness'] <= 75:
+            life = '\u2665\u2665\u2665\u2661'
+        elif 25 < pet_['happiness'] <= 50:
+            life = '\u2665\u2665\u2661\u2661'
+        elif 0 <= pet_['happiness'] <= 25:
+            life = '\u2665\u2661\u2661\u2661'
+
+        lb_happiness = self.label_ctk(self.master, life, color='Red', font=('Helvetica', 30))
+        lb_happiness.place(
+            x=5,
+            y=325
+        )
+
+    def info_about_pet(self):
+        users = JSON.load_from_json(self.user.name)
+
+        pet_file = users['pet']
+
+        name = pet_file['name']
+        type = pet_file['type']
+        mood = pet_file['happiness']
+        date = pet_file['date']
+
+        pet_ = Pet(name)
+
+        pet_.set_type(type)
+        pet_.set_mood(mood)
+        pet_.set_age(datetime.datetime.strptime(date, '%Y-%m-%d').date())
+
+        return pet_
+
+    def info_about_coins(self, name):
+        users = JSON.load_from_json(name)
+
+        self.lb_coins = self.label_ctk(self.master, 'Монеты: ' + str(users['coins']))
+        self.lb_coins.place(
+            x=5,
+            y=50
+        )
+
+    def check(self):
+        pet_ = self.info_about_pet()
+
+        mood = pet_.check_mood()
+
+        users = JSON.load_from_json(self.user.name)
+
+        dict_ = users['pet']
+
+        dict_['happiness'] = mood
+        dict_['date'] = datetime.date.today().isoformat()
+
+        JSON.dump_to_json(users, self.user.name)
+
+    def set_feed_item(self):
+        if self.var_items.get() == 'FISH':
+            self.user.items['FISH'] -= 1
+        elif self.var_items.get() == 'BONE':
+            self.user.items['BONE'] -= 1
+
+    def feed_window(self):
+        window = tkinter.Tk()
+
+        window.title('Время обеда')
+        window.config(bg='LightCyan')
+        window.geometry('500x300')
+
+        store = Storage()
+
+        lb = self.label_ctk(window, 'Покормите питомца')
+        lb.pack()
+
+        self.lb_fish_ = self.label_ctk(window, 'Количество рыбки: ' + str(self.user.items['FISH']))
+        self.lb_fish_.pack()
+
+        self.lb_bone_ = self.label_ctk(window, 'Количество косточек: ' + str(self.user.items['BONE']))
+        self.lb_bone_.pack()
+
+        rd_fish = self.radio_ctk(
+            window,
+            'Рыбка',
+            store.get_items()[0],
+            self.var_items,
+            self.set_feed_item
+        )
+        rd_fish.pack()
+
+        rd_bone = self.radio_ctk(
+            window,
+            'Косточка',
+            store.get_items()[1],
+            self.var_items,
+            self.set_feed_item
+        )
+        rd_bone.pack()
+
+        btn = self.button_ctk(window, 'Покормить', self.feed_pet)
+        btn.pack()
+
+        btn_close = self.button_ctk(window, 'Закрыть окно', lambda: window.destroy())
+        btn_close.pack()
+
+    def feed_pet(self):
+        self.check()
+        pet_ = self.info_about_pet()
+
+        users = JSON.load_from_json(self.user.name)
+
+        dict_ = users['items']
+        pet_file = users['pet']
+
+        if dict_['FISH'] == 0 and dict_['BONE'] == 0:
+            self.mb_ctk(self.title[1], 'В вашем инвентаре ничего нет.')
+
+        if dict_['FISH'] > 0:
+            if self.var_items.get() == 'FISH':
+                mood_ = pet_.feed('FISH')
+
+                self.user.pet['happiness'] = mood_
+                pet_file['happiness'] = mood_
+                dict_['FISH'] -= 1
+
+        if dict_['BONE'] > 0:
+            if self.var_items.get() == 'BONE':
+                mood_ = pet_.feed('BONE')
+
+                self.user.pet['happiness'] = mood_
+                pet_file['happiness'] = mood_
+                dict_['BONE'] -= 1
+
+        self.user.items = users['items']
+        self.user.coins = users['coins']
+
+        JSON.dump_to_json(users, self.user.name)
+
+        self.lb_fish_.configure(text='Количество рыбки: ' + str(self.user.items['FISH']))
+        self.lb_bone_.configure(text='Количество косточек: ' + str(self.user.items['BONE']))
+
+        self.info_pet(self.user.name)
+
     def app(self, string, name):
         lb_name = self.label_ctk(self.master, 'Пользователь ' + name, font=('Segoe UI Semibold', 20))
         lb_name.place(
@@ -674,7 +899,7 @@ class AppUI:
         self.frame_pet = self.frame_ctk(self.master)
         self.frame_pet.place(
             x=5,
-            y=50
+            y=95
         )
 
         lb_task = self.label_ctk(self.master, 'Ваши задачи: ')
@@ -696,7 +921,7 @@ class AppUI:
         self.list_box.configure(yscrollcommand=self.scroll.set)
 
         self.scroll.place(
-            x=525,
+            x=500,
             y=5
         )
         self.list_box.place(
@@ -709,56 +934,68 @@ class AppUI:
 
         lb_task_edit = self.label_ctk(self.master, 'Задача: ')
         lb_task_edit.place(
-            x=250,
+            x=630,
             y=265
         )
 
         btn_add = self.button_ctk(self.master, 'Добавить', self.add_window)
         btn_add.place(
-            x=250,
+            x=630,
             y=300
         )
 
         btn_del = self.button_ctk(self.master, 'Удалить', self.remove_window)
         btn_del.place(
-            x=250,
+            x=630,
             y=330
         )
 
         lb_edit = self.label_ctk(self.master, 'Изменить')
         lb_edit.place(
-            x=250,
+            x=630,
             y=370
         )
 
         btn_status = self.button_ctk(self.master, 'Статус', self.status_window)
         btn_status.place(
-            x=250,
+            x=630,
             y=405
         )
 
         lb_number = self.label_ctk(self.master, 'Номер задачи: ')
         lb_number.place(
-            x=415,
+            x=480,
             y=435
         )
 
         btn_category = self.button_ctk(self.master, 'Категория', self.category_window)
         btn_category.place(
-            x=250,
+            x=630,
             y=465
         )
 
         self.task_category = self.entry_ctk(self.master)
         self.task_category.place(
-            x=400,
+            x=480,
             y=465
         )
 
         btn_name = self.button_ctk(self.master, 'Имя', self.new_window)
         btn_name.place(
-            x=250,
+            x=630,
             y=495
+        )
+
+        btn_store = self.button_ctk(self.master, 'Купить', self.buy_window)
+        btn_store.place(
+            x=5,
+            y=400
+        )
+
+        btn_feed = self.button_ctk(self.master, 'Покормить', self.feed_window)
+        btn_feed.place(
+            x=5,
+            y=430
         )
 
     def app_log(self):
@@ -838,35 +1075,34 @@ class AppUI:
 
                         for i in self.user.todo.list_of_task:
                             string += f'{self.user.todo.list_of_task.index(i) + 1}. ' \
-                                f'{i.get_title()}: ' \
-                                f'\n{i.get_status().name}' \
-                                f'\n{i.get_category().name}\n'
+                                      f'{i.get_title()}: ' \
+                                      f'\n{i.get_status().name}' \
+                                      f'\n{i.get_category().name}\n'
 
                         pet_ = users['pet']
 
                         self.app(string, text_name)
 
                         if pet_['type'] == 'CAT':
-                            lb_pet = self.label_ctk(self.frame_pet, Animal.CAT, ('Segoe UI Semibold', 20), bc='LightPink',
-                                                    fc='LightPink')
+                            lb_pet = self.label_ctk(self.frame_pet, Animal.CAT, ('Segoe UI Semibold', 20),
+                                                    bc='LightCyan',
+                                                    fc='SteelBlue')
                             lb_pet.place(
                                 x=50,
                                 y=25
                             )
 
                         elif pet_['type'] == 'DOG':
-                            lb_pet = self.label_ctk(self.frame_pet, Animal.DOG, ('Segoe UI Semibold', 20), bc='LightPink',
-                                                    fc='LightPink')
+                            lb_pet = self.label_ctk(self.frame_pet, Animal.DOG, ('Segoe UI Semibold', 20),
+                                                    bc='LightCyan',
+                                                    fc='SteelBlue')
                             lb_pet.place(
                                 x=50,
                                 y=25
                             )
 
-                        lb_petname = self.label_ctk(self.master, pet_['name'], ('Segoe UI Semibold', 20))
-                        lb_petname.place(
-                            x=5,
-                            y=265
-                        )
+                        self.info_pet(self.user.name)
+                        self.info_about_coins(self.user.name)
 
     def app_reg(self):
         text_name_reg = self.entr_name.get()
@@ -909,27 +1145,13 @@ class AppUI:
                                          (username TEXT PRIMARY KEY, password TEXT)''')
 
                     c.execute('INSERT INTO users VALUES (?, ?)', (text_name_reg, text_password))
-                    with open(f"users/{text_name_reg}.json", "w") as fw:
-                        pass
 
                     conn.commit()
                     conn.close()
 
-                    self.name_lb = customtkinter.CTkLabel(
-                        self.master,
-                        text='Имя пользователя: ' + text_name_reg,
-                        bg_color='Pink',
-                        fg_color='Pink',
-                        font=('Segoe UI Semibold', 20),
-                    )
-                    self.name_lb.place(
-                        x=5,
-                        y=5
-                    )
+                    self.app('', text_name_reg)
 
                     pet_ = Pet(text_name_pet)
-
-                    self.app('', text_name_reg)
 
                     if self.var_pet.get() == 'CAT':
                         lb_pet = self.label_ctk(self.frame_pet, Animal.CAT, ('Segoe UI Semibold', 20), bc='LightPink',
@@ -938,6 +1160,7 @@ class AppUI:
                             x=50,
                             y=25
                         )
+                        pet_.set_type(Type.type_pet[1])
 
                     elif self.var_pet.get() == 'DOG':
                         lb_pet = self.label_ctk(self.frame_pet, Animal.DOG, ('Segoe UI Semibold', 20), bc='LightPink',
@@ -946,10 +1169,21 @@ class AppUI:
                             x=50,
                             y=25
                         )
+                        pet_.set_type(Type.type_pet[2])
 
+                    self.user = User(text_name_reg, text_password, pet_, 15, {})
 
+                    with open(f"users/{text_name_reg}.json", "w") as fw:
+                        pass
+
+                    with open(f"users/{text_name_reg}.json", "w") as fw:
+                        users = {'pet': pet_.to_dict(), 'coins': 15, 'items': {'FISH': 0, 'BONE': 0}, 'todo_task': []}
+                        JSON.dump_to_json(users, text_name_reg)
+
+                    self.info_pet(self.user.name)
+                    self.info_about_coins(self.user.name)
 
 root = customtkinter.CTk()
-root.config(bg='Pink')
+root.config(bg='LightCyan')
 AppUI(root)
 root.mainloop()

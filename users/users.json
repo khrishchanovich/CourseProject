@@ -1,128 +1,22 @@
 {
-    "nastya": {
-        "password": "lol",
-        "pet": {
-            "name": "cotik",
-            "type": "CAT",
-            "happiness": 100,
-            "date": "2023-05-03"
-        },
-        "coins": 0,
-        "items": {
-            "FISH": 1,
-            "BONE": 0
-        },
-        "todo_task": []
+    "pet": {
+        "name": "a",
+        "type": "CAT",
+        "happiness": 100,
+        "date": "2023-05-30"
     },
-    "lolik": {
-        "password": "lol",
-        "pet": {
-            "name": "kotik",
-            "type": "CAT",
-            "happiness": 100,
-            "date": "2023-05-04"
-        },
-        "coins": 15,
-        "items": {
-            "FISH": 0,
-            "BONE": 0
-        },
-        "todo_task": []
+    "coins": 15,
+    "items": {
+        "FISH": 0,
+        "BONE": 0
     },
-    "\u041d\u0430\u0441\u0442\u044f": {
-        "password": "12345",
-        "pet": {
-            "name": "\u041a\u043e\u0442\u0438\u043a",
-            "type": "CAT",
-            "happiness": 100,
-            "date": "2023-05-04"
-        },
-        "coins": 15,
-        "items": {
-            "FISH": 0,
-            "BONE": 0
-        },
-        "todo_task": []
-    },
-    "\u041b\u043e\u043b\u0438\u043a": {
-        "password": "12345",
-        "pet": {
-            "name": "\u0411\u043e\u043b\u0438\u043a",
-            "type": "DOG",
-            "happiness": 100,
-            "date": "2023-05-04"
-        },
-        "coins": 0,
-        "items": {
-            "FISH": 1,
-            "BONE": -1
-        },
-        "todo_task": [
-            {
-                "name": "t1",
-                "status": "DONE",
-                "category": "NONE",
-                "creation_time": "2023-05-04",
-                "price": 15
-            },
-            {
-                "name": "\u043a1",
-                "status": "PENDING",
-                "category": "NONE",
-                "creation_time": "2023-05-04",
-                "price": 15
-            },
-            {
-                "name": "1234567890",
-                "status": "PENDING",
-                "category": "NONE",
-                "creation_time": "2023-05-04",
-                "price": 15
-            },
-            {
-                "name": "\u04341",
-                "status": "PENDING",
-                "category": "DAILY",
-                "creation_time": "2023-05-04",
-                "price": 15
-            },
-            {
-                "name": "000000",
-                "status": "PENDING",
-                "category": "NONE",
-                "creation_time": "2023-05-04",
-                "price": 15
-            }
-        ]
-    },
-    "kkkk": {
-        "password": "12345",
-        "pet": {
-            "name": "ioio",
-            "type": "CAT",
-            "happiness": 100,
-            "date": "2023-05-04"
-        },
-        "coins": 0,
-        "items": {
-            "FISH": 0,
-            "BONE": 0
-        },
-        "todo_task": []
-    },
-    "j": {
-        "password": "k",
-        "pet": {
-            "name": "l",
-            "type": "DOG",
-            "happiness": 100,
-            "date": "2023-05-04"
-        },
-        "coins": 0,
-        "items": {
-            "FISH": 0,
-            "BONE": 0
-        },
-        "todo_task": []
-    }
+    "todo_task": [
+        {
+            "name": "dig dug",
+            "status": "PENDING",
+            "category": "NONE",
+            "creation_time": "2023-05-30",
+            "price": 15
+        }
+    ]
 }
