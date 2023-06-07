@@ -411,7 +411,7 @@ class AppUI:
                             list_[i]['status'] = Status.DONE.name
 
                     users['coins'] += 15
-
+                    self.user.coins += 15
                     JSON.dump_to_json(users, self.user.name)
                 else:
                     self.mb_ctk(self.title[0], 'Эта задача уже выполнена.')
@@ -421,6 +421,8 @@ class AppUI:
             if searched.status != Status.DONE:
                 searched.set_status(Status.DONE)
                 self.mb_ctk(self.title[2], 'Вы выполнили поставленную задачу.')
+
+                self.lb_coins.configure(text='Монеты: ' + str(self.user.coins))
 
             self.string_view()
 
